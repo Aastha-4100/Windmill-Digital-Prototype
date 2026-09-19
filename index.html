@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Wind Energy Digital Prototype</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #e8f7ff, #f7fbff);
+            color: #17324d;
+            min-height: 100vh;
+        }
+
+        header {
+            padding: 25px 8%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: white;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+        }
+
+        .logo {
+            font-size: 25px;
+            font-weight: bold;
+        }
+
+        .logo span {
+            color: #2b9cff;
+        }
+
+        nav a {
+            margin-left: 25px;
+            text-decoration: none;
+            color: #17324d;
+            font-weight: bold;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 55px 20px 25px;
+        }
+
+        .hero h1 {
+            font-size: 42px;
+            margin-bottom: 12px;
+        }
+
+        .hero p {
+            font-size: 18px;
+            color: #557086;
+        }
+
+        .experiment {
+            width: 90%;
+            max-width: 1100px;
+            margin: 35px auto;
+            background: white;
+            border-radius: 25px;
+            padding: 35px;
+            box-shadow: 0 10px 35px rgba(0,0,0,0.1);
+        }
+
+        .experiment-title {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .experiment-area {
+            position: relative;
+            height: 420px;
+            border-radius: 20px;
+            overflow: hidden;
+            background: linear-gradient(#bdeaff, #eaf9ff);
+            border: 2px solid #c9eafa;
+        }
+
+        /* Clouds */
+
+        .cloud {
+            position: absolute;
+            background: white;
+            border-radius: 50px;
+            width: 130px;
+            height: 45px;
+            opacity: 0.8;
+        }
+
+        .cloud::before,
+        .cloud::after {
+            content: "";
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+        }
+
+        .cloud::before {
+            width: 55px;
+            height: 55px;
+            left: 20px;
+            top: -25px;
+        }
+
+        .cloud::after {
+            width: 70px;
+            height: 70px;
+            right: 15px;
+            top: -35px;
+        }
+
+        .cloud1 {
+            top: 60px;
+            left: 60px;
+        }
+
+        .cloud2 {
+            top: 120px;
+            right: 80px;
+        }
+
+        /* Wind particles */
+
+        .wind {
+            position: absolute;
+            left: -100px;
+            width: 120px;
+            height: 4px;
+            background: white;
+            border-radius: 10px;
+            opacity: 0;
+        }
+
+        .wind1 {
+            top: 170px;
+        }
+
+        .wind2 {
+            top: 210px;
+        }
+
+        .wind3 {
+            top: 250px;
+        }
+
+        .wind4 {
+            top: 290px;
+        }
+
+        .wind.animate {
+            animation: windMove 1.5s linear infinite;
+            opacity: 0.8;
+        }
+
+        @keyframes windMove {
+            from {
+                left: -150px;
+            }
+
+            to {
+                left: 100%;
+            }
+        }
+
+        /* Windmill */
+
+        .windmill {
+            position: absolute;
+            left: 50%;
+            bottom: 65px;
+            transform: translateX(-50%);
+            width: 280px;
+            height: 300px;
+        }
+
+        .tower {
+            position: absolute;
+            bottom: 0;
+            left: 115px;
+            width: 50px;
+            height: 210px;
+            background: #e5e5e5;
+            clip-path: polygon(20% 0, 80% 0, 100% 100%, 0 100%);
+        }
+
+        .hub {
+            position: absolute;
+            top: 40px;
+            left: 120px;
+            width: 40px;
+            height: 40px;
+            background: #555;
+            border-radius: 50%;
+            z-index: 5;
+        }
+
+        .blades {
+            position: absolute;
+            top: 60px;
+            left: 140px;
+            width: 0;
+            height: 0;
+            z-index: 4;
+        }
+
+        .blade {
+            position: absolute;
+            width: 25px;
+            height: 115px;
+            background: #ffffff;
+            border: 2px solid #6bbbe8;
+            border-radius: 15px;
+            transform-origin: 50% 100%;
+            left: -12px;
+            bottom: 0;
+        }
+
+        .blade1 {
+            transform: rotate(0deg);
+        }
+
+        .blade2 {
+            transform: rotate(90deg);
+        }
+
+        .blade3 {
+            transform: rotate(180deg);
+        }
+
+        .blade4 {
+            transform: rotate(270deg);
+        }
+
+        .blades.spin {
+            animation: rotateBlades 2s linear infinite;
+        }
+
+        .blades.fast {
+            animation: rotateBlades 0.45s linear infinite;
+        }
+
+        .blades.medium {
+            animation: rotateBlades 0.9s linear infinite;
+        }
+
+        .blades.slow {
+            animation: rotateBlades 2s linear infinite;
+        }
+
+        @keyframes rotateBlades {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Controls */
+
+        .controls {
+            margin-top: 30px;
+            text-align: center;
+        }
+
+        .controls h2 {
+            margin-bottom: 18px;
+        }
+
+        .buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            border: none;
+            padding: 14px 25px;
+            border-radius: 30px;
+            background: #dff3ff;
+            color: #1269a5;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.25s;
+        }
+
+        button:hover {
+            transform: translateY(-3px);
+            background: #bce7ff;
+        }
+
+        button.active {
+            background: #2498e8;
+            color: white;
+        }
+
+        /* Stats */
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 18px;
+            margin-top: 30px;
+        }
+
+        .stat {
+            background: #f4fbff;
+            padding: 22px;
+            border-radius: 18px;
+            text-align: center;
+            border: 1px solid #d8eefb;
+        }
+
+        .stat h3 {
+            font-size: 15px;
+            color: #678096;
+            margin-bottom: 8px;
+        }
+
+        .stat p {
+            font-size: 25px;
+            font-weight: bold;
+            color: #1687d4;
+        }
+
+        /* Energy section */
+
+        .energy {
+            width: 90%;
+            max-width: 1100px;
+            margin: 30px auto;
+            background: white;
+            padding: 35px;
+            border-radius: 25px;
+            box-shadow: 0 10px 35px rgba(0,0,0,0.08);
+            text-align: center;
+        }
+
+        .energy-flow {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 25px;
+        }
+
+        .energy-box {
+            padding: 20px;
+            min-width: 170px;
+            background: #eff9ff;
+            border-radius: 18px;
+            font-weight: bold;
+        }
+
+        .arrow {
+            font-size: 30px;
+            color: #2498e8;
+        }
+
+        /* Result */
+
+        .result {
+            width: 90%;
+            max-width: 1100px;
+            margin: 30px auto 60px;
+            background: white;
+            padding: 35px;
+            border-radius: 25px;
+            box-shadow: 0 10px 35px rgba(0,0,0,0.08);
+        }
+
+        .result h2 {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .bar {
+            margin: 18px 0;
+        }
+
+        .bar-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 6px;
+            font-weight: bold;
+        }
+
+        .bar-bg {
+            height: 18px;
+            background: #e5f3fb;
+            border-radius: 20px;
+            overflow: hidden;
+        }
+
+        .bar-fill {
+            height: 100%;
+            width: 0%;
+            background: #2498e8;
+            border-radius: 20px;
+            transition: width 0.5s;
+        }
+
+        footer {
+            text-align: center;
+            padding: 25px;
+            background: #17324d;
+            color: white;
+        }
+
+        @media(max-width: 700px) {
+
+            .hero h1 {
+                font-size: 30px;
+            }
+
+            .stats {
+                grid-template-columns: 1fr;
+            }
+
+            .experiment {
+                padding: 20px;
+            }
+
+            .experiment-area {
+                height: 350px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+
+    <div class="logo">
+        🌬️ Wind<span>Lab</span>
+    </div>
+
+    <nav>
+        <a href="#experiment">Experiment</a>
+        <a href="#energy">Energy</a>
+        <a href="#result">Results</a>
+    </nav>
+
+</header>
+
+
+<section class="hero">
+
+    <h1>Wind Energy Digital Experiment</h1>
+
+    <p>
+        Explore how wind energy is converted into mechanical motion.
+    </p>
+
+</section>
+
+
+<section class="experiment" id="experiment">
+
+    <div class="experiment-title">
+
+        <h2>🌪️ Interactive Windmill Experiment</h2>
+
+        <p>
+            Select different wind speeds and observe the blade movement.
+        </p>
+
+    </div>
+
+
+    <div class="experiment-area">
+
+        <div class="cloud cloud1"></div>
+        <div class="cloud cloud2"></div>
+
+        <div class="wind wind1"></div>
+        <div class="wind wind2"></div>
+        <div class="wind wind3"></div>
+        <div class="wind wind4"></div>
+
+
+        <div class="windmill">
+
+            <div class="tower"></div>
+
+            <div class="blades" id="blades">
+
+                <div class="blade blade1"></div>
+                <div class="blade blade2"></div>
+                <div class="blade blade3"></div>
+                <div class="blade blade4"></div>
+
+            </div>
+
+            <div class="hub"></div>
+
+        </div>
+
+    </div>
+
+
+    <div class="controls">
+
+        <h2>🌬️ Select Wind Speed</h2>
+
+        <div class="buttons">
+
+            <button onclick="setWind('none')" id="noneBtn">
+                No Wind
+            </button>
+
+            <button onclick="setWind('low')" id="lowBtn">
+                Low
+            </button>
+
+            <button onclick="setWind('medium')" id="mediumBtn">
+                Medium
+            </button>
+
+            <button onclick="setWind('high')" id="highBtn">
+                High
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <div class="stats">
+
+        <div class="stat">
+
+            <h3>WIND SPEED</h3>
+
+            <p id="windSpeed">
+                0 km/h
+            </p>
+
+        </div>
+
+
+        <div class="stat">
+
+            <h3>BLADE SPEED</h3>
+
+            <p id="bladeSpeed">
+                0 RPM
+            </p>
+
+        </div>
+
+
+        <div class="stat">
+
+            <h3>MECHANICAL MOTION</h3>
+
+            <p id="motion">
+                None
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<section class="energy" id="energy">
+
+    <h2>⚡ Energy Conversion</h2>
+
+    <p>
+        The windmill demonstrates the conversion of wind energy
+        into mechanical motion.
+    </p>
+
+
+    <div class="energy-flow">
+
+        <div class="energy-box">
+            🌬️<br>
+            Wind Energy
+        </div>
+
+        <div class="arrow">
+            →
+        </div>
+
+        <div class="energy-box">
+            🌀<br>
+            Rotational<br>
+            Mechanical Energy
+        </div>
+
+        <div class="arrow">
+            →
+        </div>
+
+        <div class="energy-box">
+            ⚡<br>
+            Electrical Energy
+        </div>
+
+    </div>
+
+</section>
+
+
+<section class="result" id="result">
+
+    <h2>📊 Experimental Result</h2>
+
+
+    <div class="bar">
+
+        <div class="bar-label">
+
+            <span>Low Wind</span>
+
+            <span>Slow</span>
+
+        </div>
+
+        <div class="bar-bg">
+
+            <div
+                class="bar-fill"
+                style="width: 30%;">
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="bar">
+
+        <div class="bar-label">
+
+            <span>Medium Wind</span>
+
+            <span>Moderate</span>
+
+        </div>
+
+        <div class="bar-bg">
+
+            <div
+                class="bar-fill"
+                style="width: 60%;">
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="bar">
+
+        <div class="bar-label">
+
+            <span>High Wind</span>
+
+            <span>Fast</span>
+
+        </div>
+
+        <div class="bar-bg">
+
+            <div
+                class="bar-fill"
+                style="width: 90%;">
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <p style="margin-top:30px; text-align:center;">
+
+        <strong>Observation:</strong>
+
+        As wind speed increases,
+        the rotational speed of the blades also increases.
+
+    </p>
+
+</section>
+
+
+<footer>
+
+    Digital Prototype — Wind Energy Experiment
+
+</footer>
+
+
+<script>
+
+    const blades = document.getElementById("blades");
+
+    const windParticles =
+        document.querySelectorAll(".wind");
+
+    const windSpeed =
+        document.getElementById("windSpeed");
+
+    const bladeSpeed =
+        document.getElementById("bladeSpeed");
+
+    const motion =
+        document.getElementById("motion");
+
+
+    function setWind(level) {
+
+        /*
+         Remove previous animation
+        */
+
+        blades.className = "blades";
+
+
+        /*
+         Remove active button
+        */
+
+        document.querySelectorAll("button")
+            .forEach(button => {
+                button.classList.remove("active");
+            });
+
+
+        /*
+         Stop wind particles
+         */
+
+        windParticles.forEach(wind => {
+            wind.classList.remove("animate");
+        });
+
+
+        if (level === "none") {
+
+            windSpeed.innerText = "0 km/h";
+
+            bladeSpeed.innerText = "0 RPM";
+
+            motion.innerText = "None";
+
+            document
+                .getElementById("noneBtn")
+                .classList.add("active");
+
+        }
+
+
+        else if (level === "low") {
+
+            blades.classList.add("slow");
+
+            windSpeed.innerText = "10 km/h";
+
+            bladeSpeed.innerText = "20 RPM";
+
+            motion.innerText = "Small";
+
+            document
+                .getElementById("lowBtn")
+                .classList.add("active");
+
+            windParticles.forEach(wind => {
+                wind.classList.add("animate");
+            });
+
+        }
+
+
+        else if (level === "medium") {
+
+            blades.classList.add("medium");
+
+            windSpeed.innerText = "25 km/h";
+
+            bladeSpeed.innerText = "60 RPM";
+
+            motion.innerText = "Moderate";
+
+            document
+                .getElementById("mediumBtn")
+                .classList.add("active");
+
+            windParticles.forEach(wind => {
+                wind.classList.add("animate");
+            });
+
+        }
+
+
+        else if (level === "high") {
+
+            blades.classList.add("fast");
+
+            windSpeed.innerText = "40 km/h";
+
+            bladeSpeed.innerText = "120 RPM";
+
+            motion.innerText = "Large";
+
+            document
+                .getElementById("highBtn")
+                .classList.add("active");
+
+            windParticles.forEach(wind => {
+                wind.classList.add("animate");
+            });
+
+        }
+
+    }
+
+
+    /*
+       Start with No Wind
+    */
+
+    setWind("none");
+
+</script>
+
+</body>
+</html>
